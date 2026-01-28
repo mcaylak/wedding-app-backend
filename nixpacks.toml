@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ['maven', 'openjdk17']
+
+[phases.build]
+cmds = ['mvn clean package -DskipTests -Pproduction']
+
+[phases.start]
+cmd = 'java -jar target/photo-sharing.jar'
