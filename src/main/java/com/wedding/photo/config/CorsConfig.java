@@ -15,12 +15,13 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Frontend'in port'ları
+        // Frontend'in port'ları (local + Railway)
         configuration.setAllowedOriginPatterns(Arrays.asList(
             "http://localhost:3000",
             "http://localhost:3001", 
             "http://127.0.0.1:3000",
-            "http://127.0.0.1:3001"
+            "http://127.0.0.1:3001",
+            "https://wedding-app-frontend-production.up.railway.app"
         ));
         
         // İzin verilen HTTP methodları
