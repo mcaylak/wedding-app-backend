@@ -1,0 +1,55 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:weddingdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  
+  h2:
+    console:
+      enabled: true
+  
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+app:
+  jwt:
+    secret: myVeryLongSecretKey1234567890123456789012345678901234567890123456789012345678901234567890
+    expiration: 86400000 # 24 hours
+  
+  storage:
+    path: ./uploads/weddings
+  
+  file:
+    max-size: 10485760 # 10MB
+  
+  face-recognition:
+    url: ${FACE_RECOGNITION_URL:http://localhost:8082}
+
+# Cloudflare R2 Configuration
+r2:
+  access:
+    key: d2ebda8bcb8c141c0d60d299dc16639c
+  secret:
+    key: 8225d314538b72fc64ed5922142f2843ef74f499c172a4cec15f65cc50657c35
+  endpoint: https://25cefb3b69d576ba9d5d68b4134a2e6a.r2.cloudflarestorage.com
+  bucket:
+    name: wedding-photos
+
+server:
+  port: ${PORT:8080}
+
+logging:
+  level:
+    com.wedding.photo: DEBUG
+    org.springframework.security: DEBUG
