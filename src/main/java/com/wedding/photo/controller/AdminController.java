@@ -5,6 +5,7 @@ import com.wedding.photo.dto.WeddingResponse;
 import com.wedding.photo.entity.Wedding;
 import com.wedding.photo.repository.WeddingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,9 @@ public class AdminController {
     
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    
+    @Value("${app.frontend.url:http://localhost:3001}")
+    private String frontendUrl;
     
     @PostMapping("/weddings")
     public ResponseEntity<WeddingResponse> createWedding(@RequestBody CreateWeddingRequest request) {
@@ -45,7 +49,7 @@ public class AdminController {
             Wedding savedWedding = weddingRepository.save(wedding);
             
             // Generate QR code data (URL for accessing the wedding)
-            String qrCodeData = "http://localhost:3001/?wedding=" + savedWedding.getId();
+            String qrCodeData = frontendUrl + "/?wedding=" + savedWedding.getId();
             
             // Create response
             WeddingResponse response = new WeddingResponse(
@@ -77,7 +81,7 @@ public class AdminController {
             
             List<WeddingResponse> responses = weddings.stream()
                 .map(wedding -> {
-                    String qrCodeData = "http://localhost:3001/?wedding=" + wedding.getId();
+                    String qrCodeData = frontendUrl + "/?wedding=" + wedding.getId();
                     return new WeddingResponse(
                         wedding.getId(),
                         wedding.getWeddingName(),
@@ -112,7 +116,7 @@ public class AdminController {
             }
             
             Wedding wedding = weddingOpt.get();
-            String qrCodeData = "http://localhost:3001/?wedding=" + wedding.getId();
+            String qrCodeData = frontendUrl + "/?wedding=" + wedding.getId();
             
             WeddingResponse response = new WeddingResponse(
                 wedding.getId(),
@@ -182,7 +186,7 @@ public class AdminController {
             }
             
             Wedding savedWedding = weddingRepository.save(wedding);
-            String qrCodeData = "http://localhost:3001/?wedding=" + savedWedding.getId();
+            String qrCodeData = frontendUrl + "/?wedding=" + savedWedding.getId();
             
             WeddingResponse response = new WeddingResponse(
                 savedWedding.getId(),
