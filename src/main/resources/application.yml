@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:weddingdb
+    url: jdbc:h2:file:./data/weddingdb
     driver-class-name: org.h2.Driver
     username: sa
     password: password
   
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
