@@ -10,6 +10,7 @@ import com.wedding.photo.service.AuthService;
 import com.wedding.photo.service.FaceRecognitionService;
 import com.wedding.photo.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,9 @@ public class FaceController {
     
     @Autowired
     private AuthService authService;
+    
+    @Value("${app.backend.url:http://localhost:8080}")
+    private String backendUrl;
     
     private final ObjectMapper objectMapper = new ObjectMapper();
     
@@ -77,7 +81,7 @@ public class FaceController {
             
             for (Photo photo : allPhotos) {
                 // Create photo URL for face recognition service to download
-                String photoUrl = "http://localhost:8080/api/photos/download/" + photo.getId() + 
+                String photoUrl = backendUrl + "/api/photos/download/" + photo.getId() + 
                     "?token=" + generatePhotoAccessToken(weddingId);
                 
                 Map<String, Object> imageData = new HashMap<>();

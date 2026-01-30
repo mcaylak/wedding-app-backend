@@ -36,6 +36,12 @@ app:
   
   face-recognition:
     url: ${FACE_RECOGNITION_URL:http://localhost:8082}
+  
+  backend:
+    url: ${BACKEND_URL:http://localhost:8080}
+  
+  frontend:
+    url: ${FRONTEND_URL:http://localhost:3001}
 
 # Cloudflare R2 Configuration
 r2:
