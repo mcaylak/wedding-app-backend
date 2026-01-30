@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:h2:file:./data/weddingdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: password
+    url: ${DATABASE_URL:jdbc:h2:file:./data/weddingdb}
+    driver-class-name: ${DATABASE_DRIVER:org.h2.Driver}
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:password}
   
   jpa:
     hibernate:
@@ -12,6 +12,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        dialect: ${DATABASE_DIALECT:org.hibernate.dialect.H2Dialect}
   
   h2:
     console:
