@@ -44,12 +44,18 @@ public class AdminController {
             wedding.setCeremonyTime(request.getCeremonyTime());
             wedding.setReceptionTime(request.getReceptionTime());
             wedding.setSpecialMessage(request.getSpecialMessage());
+            wedding.setSubdomain(request.getSubdomain());
             
             // Save to database
             Wedding savedWedding = weddingRepository.save(wedding);
             
             // Generate QR code data (URL for accessing the wedding)
-            String qrCodeData = frontendUrl + "/?wedding=" + savedWedding.getId();
+            String qrCodeData;
+            if (savedWedding.getSubdomain() != null && !savedWedding.getSubdomain().trim().isEmpty()) {
+                qrCodeData = "https://" + savedWedding.getSubdomain() + ".myevent.gallery/?wedding=" + savedWedding.getId();
+            } else {
+                qrCodeData = frontendUrl + "/?wedding=" + savedWedding.getId();
+            }
             
             // Create response
             WeddingResponse response = new WeddingResponse(
@@ -84,7 +90,12 @@ public class AdminController {
             
             List<WeddingResponse> responses = weddings.stream()
                 .map(wedding -> {
-                    String qrCodeData = frontendUrl + "/?wedding=" + wedding.getId();
+                    String qrCodeData;
+                    if (wedding.getSubdomain() != null && !wedding.getSubdomain().trim().isEmpty()) {
+                        qrCodeData = "https://" + wedding.getSubdomain() + ".myevent.gallery/?wedding=" + wedding.getId();
+                    } else {
+                        qrCodeData = frontendUrl + "/?wedding=" + wedding.getId();
+                    }
                     return new WeddingResponse(
                         wedding.getId(),
                         wedding.getWeddingName(),
@@ -119,7 +130,12 @@ public class AdminController {
             }
             
             Wedding wedding = weddingOpt.get();
-            String qrCodeData = frontendUrl + "/?wedding=" + wedding.getId();
+            String qrCodeData;
+            if (wedding.getSubdomain() != null && !wedding.getSubdomain().trim().isEmpty()) {
+                qrCodeData = "https://" + wedding.getSubdomain() + ".myevent.gallery/?wedding=" + wedding.getId();
+            } else {
+                qrCodeData = frontendUrl + "/?wedding=" + wedding.getId();
+            }
             
             WeddingResponse response = new WeddingResponse(
                 wedding.getId(),
@@ -187,9 +203,17 @@ public class AdminController {
             if (request.getSpecialMessage() != null) {
                 wedding.setSpecialMessage(request.getSpecialMessage());
             }
+            if (request.getSubdomain() != null) {
+                wedding.setSubdomain(request.getSubdomain());
+            }
             
             Wedding savedWedding = weddingRepository.save(wedding);
-            String qrCodeData = frontendUrl + "/?wedding=" + savedWedding.getId();
+            String qrCodeData;
+            if (savedWedding.getSubdomain() != null && !savedWedding.getSubdomain().trim().isEmpty()) {
+                qrCodeData = "https://" + savedWedding.getSubdomain() + ".myevent.gallery/?wedding=" + savedWedding.getId();
+            } else {
+                qrCodeData = frontendUrl + "/?wedding=" + savedWedding.getId();
+            }
             
             WeddingResponse response = new WeddingResponse(
                 savedWedding.getId(),

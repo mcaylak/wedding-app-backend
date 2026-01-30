@@ -48,6 +48,9 @@ public class Wedding {
     @Column(nullable = true, length = 2000)
     private String specialMessage;
     
+    @Column(nullable = true)
+    private String subdomain;
+    
     @OneToMany(mappedBy = "wedding", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Photo> photos;
     
@@ -108,4 +111,7 @@ public class Wedding {
     
     public String getSpecialMessage() { return specialMessage; }
     public void setSpecialMessage(String specialMessage) { this.specialMessage = specialMessage; }
+    
+    public String getSubdomain() { return subdomain; }
+    public void setSubdomain(String subdomain) { this.subdomain = subdomain; }
 }

@@ -13,6 +13,7 @@ public class CreateWeddingRequest {
     private String ceremonyTime;
     private String receptionTime;
     private String specialMessage;
+    private String subdomain;
     
     public CreateWeddingRequest() {}
     
@@ -60,4 +61,7 @@ public class CreateWeddingRequest {
     
     public String getSpecialMessage() { return specialMessage; }
     public void setSpecialMessage(String specialMessage) { this.specialMessage = specialMessage; }
+    
+    public String getSubdomain() { return subdomain; }
+    public void setSubdomain(String subdomain) { this.subdomain = subdomain; }
 }
