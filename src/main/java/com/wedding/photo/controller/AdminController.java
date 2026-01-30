@@ -70,7 +70,10 @@ public class AdminController {
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(new WeddingResponse(
+                null, "Error: " + e.getMessage(), "", "", null, "", "", "", "", "", null, ""
+            ));
         }
     }
     
