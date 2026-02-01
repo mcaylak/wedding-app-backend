@@ -33,6 +33,9 @@ public class PhotoController {
     @Autowired
     private R2StorageService r2StorageService;
     
+    @Autowired
+    private ThumbnailService thumbnailService;
+    
     @GetMapping("/{weddingId}")
     public ResponseEntity<PagedResponse<PhotoResponse>> getPhotos(
             @PathVariable UUID weddingId,
@@ -130,6 +133,70 @@ public class PhotoController {
             }
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
+        }
+    }
+    
+    @GetMapping("/thumbnail/{photoId}")
+    public ResponseEntity<Resource> getThumbnail(
+            @PathVariable Long photoId,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestParam(value = "token", required = false) String tokenParam) {
+        
+        String token = null;
+        
+        // Try to get token from query parameter first, then from header
+        if (tokenParam != null && !tokenParam.isEmpty()) {
+            token = tokenParam;
+        } else if (authHeader != null) {
+            token = extractToken(authHeader);
+        }
+        
+        if (token == null) {
+            return ResponseEntity.status(401).build();
+        }
+        
+        UUID weddingId = authService.validateTokenAndGetWeddingId(token);
+        
+        try {
+            // Get photo metadata from database
+            PhotoResponse photo = photoService.getPhoto(weddingId, photoId);
+            if (photo == null) {
+                return ResponseEntity.notFound().build();
+            }
+            
+            String filePath = photoService.getPhotoFilePath(weddingId, photoId);
+            InputStream thumbnailStream;
+            
+            // Check if thumbnail is already cached
+            if (thumbnailService.isThumbnailCached(filePath)) {
+                // Use cached thumbnail
+                thumbnailStream = thumbnailService.getCachedThumbnail(filePath);
+            } else {
+                // Generate new thumbnail and cache it
+                thumbnailStream = thumbnailService.generateThumbnail(filePath);
+                
+                // Cache for next time (async to not slow down response)
+                try {
+                    InputStream thumbnailForCache = thumbnailService.generateThumbnail(filePath);
+                    thumbnailService.cacheThumbnail(filePath, thumbnailForCache);
+                } catch (Exception e) {
+                    // Cache failure shouldn't break the response
+                    System.err.println("Failed to cache thumbnail: " + e.getMessage());
+                }
+            }
+            
+            Resource resource = new InputStreamResource(thumbnailStream);
+            
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(thumbnailService.getThumbnailContentType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=2592000") // 30 days cache
+                    .body(resource);
+                    
+        } catch (Exception e) {
+            System.err.println("Thumbnail generation failed: " + e.getMessage());
+            // Fallback to original image if thumbnail fails
+            return downloadPhoto(photoId, authHeader, tokenParam);
         }
     }
     
