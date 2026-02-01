@@ -5,6 +5,7 @@ import com.wedding.photo.dto.PhotoResponse;
 import com.wedding.photo.service.AuthService;
 import com.wedding.photo.service.PhotoService;
 import com.wedding.photo.service.R2StorageService;
+import com.wedding.photo.service.ThumbnailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;

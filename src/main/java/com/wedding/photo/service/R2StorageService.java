@@ -84,6 +84,24 @@ public class R2StorageService {
         }
     }
 
+    public void uploadFile(String objectKey, InputStream inputStream, String contentType) throws IOException {
+        try {
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(r2Config.getBucketName())
+                    .key(objectKey)
+                    .contentType(contentType)
+                    .build();
+
+            // Convert InputStream to byte array to get content length
+            byte[] bytes = inputStream.readAllBytes();
+            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes));
+            log.info("Successfully uploaded file to R2: {}", objectKey);
+        } catch (Exception e) {
+            log.error("Failed to upload file to R2: {}", objectKey, e);
+            throw new IOException("Failed to upload file to R2", e);
+        }
+    }
+
     public void deleteFile(String objectKey) throws IOException {
         try {
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
