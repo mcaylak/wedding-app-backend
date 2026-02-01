@@ -169,9 +169,9 @@ public class PhotoController {
             InputStream thumbnailStream;
             
             // Check if thumbnail is already cached
-            if (thumbnailService.isThumbnailCached(filePath)) {
+            if (thumbnailService.isThumbnailCached(filePath, photoId)) {
                 // Use cached thumbnail
-                thumbnailStream = thumbnailService.getCachedThumbnail(filePath);
+                thumbnailStream = thumbnailService.getCachedThumbnail(filePath, photoId);
             } else {
                 // Generate new thumbnail and cache it
                 thumbnailStream = thumbnailService.generateThumbnail(filePath);
@@ -179,7 +179,7 @@ public class PhotoController {
                 // Cache for next time (async to not slow down response)
                 try {
                     InputStream thumbnailForCache = thumbnailService.generateThumbnail(filePath);
-                    thumbnailService.cacheThumbnail(filePath, thumbnailForCache);
+                    thumbnailService.cacheThumbnail(filePath, photoId, thumbnailForCache);
                 } catch (Exception e) {
                     // Cache failure shouldn't break the response
                     System.err.println("Failed to cache thumbnail: " + e.getMessage());

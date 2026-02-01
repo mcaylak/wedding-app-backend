@@ -68,8 +68,8 @@ public class ThumbnailService {
         return "image/jpeg";
     }
     
-    public boolean isThumbnailCached(String filePath) {
-        String thumbnailPath = getThumbnailPath(filePath);
+    public boolean isThumbnailCached(String filePath, Long photoId) {
+        String thumbnailPath = getThumbnailPath(filePath, photoId);
         try {
             r2StorageService.getFileStream(thumbnailPath);
             return true;
@@ -78,22 +78,30 @@ public class ThumbnailService {
         }
     }
     
-    public void cacheThumbnail(String originalFilePath, InputStream thumbnailStream) throws IOException {
-        String thumbnailPath = getThumbnailPath(originalFilePath);
+    public void cacheThumbnail(String originalFilePath, Long photoId, InputStream thumbnailStream) throws IOException {
+        String thumbnailPath = getThumbnailPath(originalFilePath, photoId);
         r2StorageService.uploadFile(thumbnailPath, thumbnailStream, getThumbnailContentType());
     }
     
-    public InputStream getCachedThumbnail(String originalFilePath) throws IOException {
-        String thumbnailPath = getThumbnailPath(originalFilePath);
+    public InputStream getCachedThumbnail(String originalFilePath, Long photoId) throws IOException {
+        String thumbnailPath = getThumbnailPath(originalFilePath, photoId);
         return r2StorageService.getFileStream(thumbnailPath);
     }
     
-    private String getThumbnailPath(String originalFilePath) {
-        // Convert: "wedding-123/photo-456.jpg" -> "wedding-123/thumbnails/photo-456.jpg"
+    private String getThumbnailPath(String originalFilePath, Long photoId) {
+        // Convert: "wedding-123/photo-456.jpg" -> "wedding-123/thumbnails/photo-[ID]-456.jpg" 
+        // This ensures unique thumbnail paths even for same filenames
         String[] parts = originalFilePath.split("/");
         if (parts.length >= 2) {
-            return parts[0] + "/thumbnails/" + parts[1];
+            String fileName = parts[1];
+            String extension = "";
+            int dotIndex = fileName.lastIndexOf('.');
+            if (dotIndex > 0) {
+                extension = fileName.substring(dotIndex);
+                fileName = fileName.substring(0, dotIndex);
+            }
+            return parts[0] + "/thumbnails/photo-" + photoId + extension;
         }
-        return "thumbnails/" + originalFilePath;
+        return "thumbnails/photo-" + photoId + ".jpg";
     }
 }
