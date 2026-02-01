@@ -35,14 +35,17 @@ public class ThumbnailService {
         int originalWidth = originalImage.getWidth();
         int originalHeight = originalImage.getHeight();
         
-        int newWidth, newHeight;
-        if (originalWidth > originalHeight) {
-            newWidth = THUMBNAIL_SIZE;
-            newHeight = (int) ((double) originalHeight / originalWidth * THUMBNAIL_SIZE);
-        } else {
-            newHeight = THUMBNAIL_SIZE;
-            newWidth = (int) ((double) originalWidth / originalHeight * THUMBNAIL_SIZE);
-        }
+        // Create square thumbnail by cropping from center
+        int cropSize = Math.min(originalWidth, originalHeight);
+        int cropX = (originalWidth - cropSize) / 2;
+        int cropY = (originalHeight - cropSize) / 2;
+        
+        // Crop to square first
+        BufferedImage croppedImage = originalImage.getSubimage(cropX, cropY, cropSize, cropSize);
+        
+        // Then resize to thumbnail size
+        int newWidth = THUMBNAIL_SIZE;
+        int newHeight = THUMBNAIL_SIZE;
         
         // Create thumbnail with high quality scaling
         BufferedImage thumbnail = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
@@ -53,8 +56,8 @@ public class ThumbnailService {
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
-        // Draw scaled image
-        g2d.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
+        // Draw scaled image from cropped square
+        g2d.drawImage(croppedImage, 0, 0, newWidth, newHeight, null);
         g2d.dispose();
         
         // Convert to byte array

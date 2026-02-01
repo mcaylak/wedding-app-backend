@@ -52,6 +52,15 @@ public class PhotoController {
         }
         
         PagedResponse<PhotoResponse> photos = photoService.getPhotosByWeddingIdPaginated(weddingId, page, size);
+        
+        // Debug: Log photo ID to filename mapping
+        System.out.println("DEBUG Gallery Photos:");
+        if (photos.getContent() != null) {
+            photos.getContent().forEach(photo -> {
+                System.out.println("  Photo ID: " + photo.getId() + " -> fileName: " + photo.getFileName());
+            });
+        }
+        
         return ResponseEntity.ok(photos);
     }
     
@@ -96,6 +105,8 @@ public class PhotoController {
             
             // Get file stream from R2
             String filePath = photoService.getPhotoFilePath(weddingId, photoId);
+            System.out.println("DEBUG /download/" + photoId + " -> fileName: " + photo.getFileName() + ", filePath: " + filePath);
+            
             InputStream fileStream = r2StorageService.getFileStream(filePath);
             Resource resource = new InputStreamResource(fileStream);
             
@@ -195,9 +206,10 @@ public class PhotoController {
                     .body(resource);
                     
         } catch (Exception e) {
-            System.err.println("Thumbnail generation failed: " + e.getMessage());
-            // Fallback to original image if thumbnail fails
-            return downloadPhoto(photoId, authHeader, tokenParam);
+            System.err.println("Thumbnail generation failed for photoId " + photoId + ": " + e.getMessage());
+            e.printStackTrace();
+            // Return 404 instead of fallback to identify the problem
+            return ResponseEntity.notFound().build();
         }
     }
     

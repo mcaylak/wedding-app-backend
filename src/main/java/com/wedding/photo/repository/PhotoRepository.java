@@ -13,6 +13,7 @@ import java.util.UUID;
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
     List<Photo> findByWeddingIdOrderByCreatedAtDesc(UUID weddingId);
     Page<Photo> findByWeddingIdOrderByCreatedAtDesc(UUID weddingId, Pageable pageable);
+    Page<Photo> findByWeddingIdOrderByIdAsc(UUID weddingId, Pageable pageable);
     List<Photo> findByWeddingIdAndHasFaceTrue(UUID weddingId);
     long countByWeddingId(UUID weddingId);
     long countByWeddingIdAndHasFaceTrue(UUID weddingId);

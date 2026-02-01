@@ -78,7 +78,7 @@ public class PhotoService {
         }
         
         Pageable pageable = PageRequest.of(page, size);
-        Page<Photo> photoPage = photoRepository.findByWeddingIdOrderByCreatedAtDesc(weddingId, pageable);
+        Page<Photo> photoPage = photoRepository.findByWeddingIdOrderByIdAsc(weddingId, pageable);
         
         List<PhotoResponse> photoResponses = photoPage.getContent().stream()
                 .map(photo -> new PhotoResponse(
