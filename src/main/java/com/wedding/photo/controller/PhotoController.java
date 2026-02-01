@@ -99,6 +99,8 @@ public class PhotoController {
                     .contentType(MediaType.parseMediaType(photo.getContentType()))
                     .header(HttpHeaders.CONTENT_DISPOSITION, 
                            "inline; filename=\"" + photo.getFileName() + "\"")
+                    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=86400") // 24 hours cache
+                    .header(HttpHeaders.EXPIRES, "86400") // 24 hours
                     .body(resource);
                     
         } catch (Exception e) {
