@@ -38,7 +38,7 @@ public class PhotoController {
             @PathVariable UUID weddingId,
             @RequestHeader("Authorization") String authHeader,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "12") int size) {
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         
         String token = extractToken(authHeader);
         UUID tokenWeddingId = authService.validateTokenAndGetWeddingId(token);
